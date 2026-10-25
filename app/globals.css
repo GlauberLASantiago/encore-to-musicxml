@@ -11,7 +11,7 @@ button, input { font:inherit; }
 .brand b { color:var(--green); font-weight:700; }
 .brandMark { display:grid; place-items:center; width:38px; height:38px; border-radius:11px; color:var(--paper); background:var(--green); font-size:24px; }
 .sourceLink { color:var(--ink); text-decoration:none; font-size:13px; border-bottom:1px solid; padding-bottom:3px; }
-.hero { max-width:820px; margin:0 auto; padding:82px 28px 72px; text-align:center; }
+.hero { max-width:820px; margin:0 auto; padding:82px 28px 72px; text-align:center; transition:padding-top .3s ease; }
 .hero.compact { padding-top:58px; }
 .eyebrow { margin:0 0 18px; color:var(--green); text-transform:uppercase; letter-spacing:.16em; font-size:11px; font-weight:800; }
 h1 { margin:0; font-family:Georgia, 'Times New Roman', serif; font-size:clamp(44px,7vw,76px); line-height:.99; letter-spacing:-.045em; font-weight:500; }
@@ -67,3 +67,4 @@ footer { max-width:1124px; margin:auto; padding:26px 28px 38px; border-top:1px s
 footer a { color:inherit; text-underline-offset:3px; }
 @media (max-width:900px) { .credits{grid-template-columns:1fr;gap:34px}.creditGrid{grid-template-columns:1fr}.creditGrid article{min-height:190px} }
 @media (max-width:720px) { .hero{padding-top:60px}.how{grid-template-columns:1fr;gap:36px}.how ol{grid-template-columns:1fr}.how li{padding-bottom:18px}.how li b{margin-bottom:8px}.sourceLink{display:none}footer{flex-direction:column} }
+@media (prefers-reduced-motion: reduce) { .hero, .dropzone { transition:none; } .dropzone:hover, .dropzone.dragging { transform:none; } .spinner { animation:none; } }
