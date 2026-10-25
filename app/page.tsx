@@ -1,17 +1,65 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ConversionResult, convertEncore } from './lib/enc-converter';
+
+gsap.registerPlugin(useGSAP);
 
 type State = 'idle' | 'reading' | 'done' | 'error';
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const previousState = useRef<State | null>(null);
   const [dragging, setDragging] = useState(false);
   const [state, setState] = useState<State>('idle');
   const [fileName, setFileName] = useState('');
   const [result, setResult] = useState<ConversionResult | null>(null);
   const [error, setError] = useState('');
+
+  useGSAP(() => {
+    const stateBeforeUpdate = previousState.current;
+    previousState.current = state;
+
+    if (stateBeforeUpdate === null) return;
+
+    const media = gsap.matchMedia();
+    media.add('(prefers-reduced-motion: no-preference)', () => {
+      if (state === 'idle') {
+        gsap.fromTo(
+          '.dropzone',
+          { autoAlpha: 0.75, y: 8 },
+          { autoAlpha: 1, y: 0, duration: 0.28, ease: 'power2.out' },
+        );
+        return;
+      }
+
+      gsap.fromTo(
+        '.resultCard',
+        { autoAlpha: 0.8, y: 8 },
+        { autoAlpha: 1, y: 0, duration: 0.28, ease: 'power2.out' },
+      );
+
+      if (state === 'done') {
+        gsap.fromTo(
+          '.resultCard small, .resultCard strong, .resultCard p, .stats span, .actions button',
+          { autoAlpha: 0, y: 7 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.2,
+            stagger: 0.045,
+            delay: 0.04,
+            ease: 'power2.out',
+          },
+        );
+      }
+    });
+
+    return () => media.revert();
+  }, { scope: heroRef, dependencies: [state], revertOnUpdate: true });
 
   async function process(file?: File) {
     if (!file) return;
@@ -41,7 +89,7 @@ export default function Home() {
         <a className="sourceLink" href="https://github.com/lvinken/Enc2MusicXML" target="_blank" rel="noreferrer">Projeto original ↗</a>
       </header>
 
-      <section className={`hero ${state !== 'idle' ? 'compact' : ''}`}>
+      <section ref={heroRef} className={`hero ${state !== 'idle' ? 'compact' : ''}`}>
         <p className="eyebrow">Conversor local de partituras</p>
         <h1>Encore para MusicXML,<br /><em>direto no navegador.</em></h1>
         <p className="lede">Abra uma partitura <code>.enc</code>, converta e baixe um arquivo compatível com MuseScore e outros editores. Seus dados nunca saem do computador.</p>
